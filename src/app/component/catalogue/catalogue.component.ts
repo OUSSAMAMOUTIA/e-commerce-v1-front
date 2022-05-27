@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {CatalogueService} from "../../service/catalogue.service";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {HttpEventType, HttpResponse} from "@angular/common/http";
+import {AuthService} from "../../service/auth.service";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-catalogue',
@@ -16,7 +18,11 @@ export class CatalogueComponent implements OnInit {
   public progress!: number;
   public currentFileUpload: any;
   public title!:string;
-  constructor(public catalogueService: CatalogueService, public route: ActivatedRoute, public router: Router) {
+  public timestamp=0;
+  public formGroup:FormGroup = this.fb.group({
+    quantity:1,
+  })
+  constructor(public catalogueService: CatalogueService, public route: ActivatedRoute, public router: Router,public authService:AuthService,private fb:FormBuilder) {
   }
 
   ngOnInit(): void {
@@ -84,11 +90,20 @@ export class CatalogueComponent implements OnInit {
           this.progress = Math.round(100 * event.loaded / event.total);
         } else if (event instanceof HttpResponse) {
           console.log('File uploaded!');
-          this.getProducts("products/search/selectedproduct");
+          // this.getProducts("products/search/selectedproduct");
+          this.timestamp=Date.now();
         }
       }, error => {
         alert("error" + JSON.parse(error.error).message);
       }
     )
+  }
+
+  getTs() {
+     return this.timestamp;
+  }
+
+  isAdmin() {
+   return  this.authService.isAdmin();
   }
 }

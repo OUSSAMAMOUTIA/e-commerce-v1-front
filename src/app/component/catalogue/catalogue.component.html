@@ -1,35 +1,56 @@
 <div><h3>{{title}}</h3></div>
-<div *ngIf="products" class="d-flex flex-lg-wrap">
+<div *ngIf="products" style="display: grid;grid-template-columns: repeat(auto-fill,minmax(10rem,40%));gap: 1rem">
 
   <div *ngFor="let product of products._embedded.products">
-    <div class="col-md-6">
-      <div class="panel panel-default">
-        <div class="panel-heading">{{product.name}}</div>
-        <div class="panel-body">
-          <table>
-            <tr>
-              <td rowspan="3">
-                <img src="{{this.catalogueService.host+'productimage/'+product.id}}" style="height:100%">
-                <p>
-                  <button (click)="onEditPhoto(product)">
-                    <span class="glyphicon glyphicon-edit p-2"></span>
-                  </button>
-                </p>
-                <p *ngIf="editPhoto && crrentProduct==product">
-                  <input type="file" (change)="onSelectedFile($event)">
-                  <button class="btn btn-success mt-2" (click)="upload()">Upload</button>
-                  {{progress}}
-                </p>
-              </td>
-            </tr>
+    <div class="card col-md-12  ">
+      <div class="card " >
+        <div class="card-header">{{product.name}}</div>
+        <div class="card-body">
+          <img class="img-thumbnail img-fluid btn"
+               src="{{this.catalogueService.host+'productimage/'+product.id+'?ts='+getTs()}}"
+               style="display: block;max-width: 100%">
+          <div *ngIf="isAdmin()">
+            <p>
+              <button style="margin-top: 2px" (click)="onEditPhoto(product)">
+                <i class="bi bi-upload mt-2"></i>
+              </button>
+            </p>
+            <p *ngIf="editPhoto && crrentProduct==product">
+              <input type="file" (change)="onSelectedFile($event)">
+              <button class="btn btn-success mt-2" (click)="upload()">Upload</button>
+              {{progress}}
+            </p>
+          </div>
+          <div>
+            {{product.description}}
+          </div>
+          <div>
+            <label>Price:{{product.currentPrice|number:"0.2"}}
+            </label>
+          </div>
+          <div>
+          <span *ngIf="product.promotion">
+          <i class="bi bi-hourglass-top" style="color: green"></i>
+          </span>
+            <span *ngIf="product.selected" style="margin:0 .5rem">
+          <i class="bi bi-check-square-fill" style="color: orange"></i>
+          </span>
+            <span *ngIf="product.available">
+           <i class="bi bi-suit-heart-fill" style="color: red"></i>
+          </span>
+          </div>
+          <div>
+            <form [formGroup]="formGroup" class="d-flex justify-content-between">
+              <div class="form-group col-md-3 ">
+                <label for="quantity">Quantité :</label>
+                <input formControlName="quantity" type="number" class="form-control input-group" id="quantity"  [(ngModel)]="product.quantity" name="quantity">
+              </div>
+              <button type="submit" class="btn btn-primary mt-2">
+                <i class="bi bi-cart"></i>
+              </button>
 
-            <tr>
-              <td>
-              </td>
-              <td>{{product.currentPrice|number:"0.2"}}</td>
-            </tr>
-
-          </table>
+            </form>
+          </div>
         </div>
       </div>
     </div>

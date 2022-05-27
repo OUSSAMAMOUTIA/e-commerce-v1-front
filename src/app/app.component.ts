@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {CatalogueService} from "./service/catalogue.service";
 import { Router} from "@angular/router";
+import {AuthService} from "./service/auth.service";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-root',
@@ -11,10 +13,12 @@ export class AppComponent implements OnInit {
 
   public categories: any;
   public currentCategory: any;
-  constructor(private catalogueService: CatalogueService,private router:Router) {
+
+  constructor(private catalogueService: CatalogueService,private router:Router,private authService:AuthService) {
   }
 
   ngOnInit(): void {
+    this.authService.getUserLocalStorage();
     this.getCatetgories();
   }
 
@@ -51,5 +55,10 @@ export class AppComponent implements OnInit {
     this.currentCategory = null;
     // @ts-ignore
     this.router.navigateByUrl("products/4/0" );
+  }
+
+  onLogout() {
+    this.authService.removeUserLocalStorage();
+    this.router.navigateByUrl("login");
   }
 }
