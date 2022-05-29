@@ -1,0 +1,101 @@
+<div *ngIf="currentProduct">
+  <div class="card col-md-10 " *ngIf="mode==0">
+    <div class="card-header">Fiche Produit :{{currentProduct.name}}
+      <span class="btn" (click)="onEditProduct()"><i class="bi bi-pencil-square"></i></span>
+    </div>
+    <div class="card-body d-flex align-content-center justify-content-center">
+      <div class="col-md-5">
+        <img class="img-thumbnail"
+             [src]="this.catalogueService.host+'/productimage/'+currentProduct.id+'?ts='+getTs()"
+             alt="">
+        <div *ngIf="isAdmin()">
+          <button *ngIf="!editPhoto" (click)="onEditPhoto(currentProduct)">
+            <span><i class="bi bi-pencil-square"></i></span>
+          </button>
+          <span *ngIf="editPhoto">
+            <input type="file" (change)="onSelectedFile($event)">
+              <button class="btn btn-success mt-2" (click)="upload()"><span><i
+                class="bi bi-upload mt-2"></i></span></button>
+            {{progress}}
+          </span>
+        </div>
+        <div>
+         <span *ngIf="currentProduct.promotion">
+          <i class="bi bi-hourglass-top" style="color: green"></i>
+          </span>
+          <span *ngIf="currentProduct.selected" style="margin:0 .5rem">
+          <i class="bi bi-check-square-fill" style="color: orange"></i>
+          </span>
+          <span *ngIf="currentProduct.available">
+           <i class="bi bi-suit-heart-fill" style="color: red"></i>
+          </span>
+        </div>
+        <div>
+          <form [formGroup]="formGroup" (ngSubmit)="onAddProductToPanier(currentProduct)"
+                class="d-flex justify-content-between">
+            <div class="form-group col-md-4 ">
+              <label for="quantity">Quantité :</label>
+              <input formControlName="quantity" type="number" class="form-control input-group"
+                     id="quantity" [(ngModel)]="currentProduct.quantity" name="quantity">
+            </div>
+            <button type="submit" class="btn btn-primary mt-2 m-lg-2">
+              <i class="bi bi-cart"></i>
+            </button>
+
+          </form>
+        </div>
+      </div>
+      <div class="col-md-7 mt-2">
+        <div class="card col-md-12">
+          <div class="card-body">
+            <h5 class="card-title" style="overflow: hidden">{{currentProduct.name}}</h5>
+            <p class="card-text">Description : {{currentProduct.description}}</p>
+              <div>
+                <span class="badge badge-primary">Price : {{currentProduct.currentPrice | currency:'EUR':true}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  <div *ngIf="mode==1" class="col-md-8">
+    <form [formGroup]="formGroup" (ngSubmit)="onUpdateProduct()">
+      <div class="form-group">
+        <label for="name">Nom :</label>
+        <input formControlName="name" type="text" class="form-control" id="name"
+               [(ngModel)]="currentProduct.name" name="name">
+      </div>
+      <div class="form-group">
+        <label for="description">Description :</label>
+        <textarea formControlName="description" class="form-control" id="description"
+                  [(ngModel)]="currentProduct.description" name="description"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="price">Price :</label>
+        <input formControlName="price" type="number" class="form-control" id="price"
+               [(ngModel)]="currentProduct.currentPrice" name="price">
+      </div>
+      <div class="mb-3 form-check">
+        <label for="promotion">Promotion :</label>
+        <input formControlName="promotion" type="checkbox" class="form-check-input" id="promotion"
+               [(ngModel)]="currentProduct.promotion" name="promotion">
+        </div>
+      <div class="mb-3 form-check">
+        <label for="available">Disponible :</label>
+        <input formControlName="available" type="checkbox" class="form-check-input" id="available"
+               [(ngModel)]="currentProduct.available" name="available">
+      </div>
+      <div class="mb-3 form-check">
+        <label for="selected">Selectionné :</label>
+        <input formControlName="selected" type="checkbox" class="form-check-input" id="selected"
+               [(ngModel)]="currentProduct.selected" name="selected">
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-pencil-square">Update</i>
+        </button>
+    </form>
+  </div>
+  </div>
+
+
